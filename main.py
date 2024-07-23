@@ -1,7 +1,8 @@
+from pygame.locals import *
+
 def game():
 
-    import pygame
-    import random
+    import pygame, random, sys
 
     pygame.init()
     pygame.display.set_caption('Espinorun')
@@ -33,6 +34,10 @@ def game():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
+            if event.type == KEYDOWN:
+                if event.key == K_ESCAPE:
+                    pygame.quit()
+                    sys.exit()
             elif event.type == MOVEEMENT:
                     MOVEEMENT, t = pygame.USEREVENT+1, random.randrange(1000, 2000)
                     pygame.time.set_timer(MOVEEMENT, t)

@@ -28,7 +28,6 @@ def main_menu():
         screen.fill([48, 100, 184])
         draw_text("Jogo do Dinossauro", font_titulo, (255, 255, 255), screen, 325, 200)
         
-
         mx, my = pygame.mouse.get_pos()
 
         button_1 = pygame.Rect(525, 500, 200, 50)
