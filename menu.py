@@ -1,4 +1,5 @@
 import pygame, sys
+from main import game
 
 pygame.init()
 screen = pygame.display.set_mode((1280, 720))
@@ -64,29 +65,5 @@ def main_menu():
         
         pygame.display.update()
         clock.tick(60)
-
-def game():
-    running = True
-    while running:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                running = False
-                pygame.quit()
-                sys.exit()
-            if event.type == KEYDOWN:
-                if event.key == K_ESCAPE:
-                    running = False
-
-        screen.fill([66, 135, 245])
-
-        pygame.draw.circle(screen, "red", player_pos, 40)
-
-        keys = pygame.key.get_pressed()
-        if keys[pygame.K_SPACE]:
-            player_pos.y -= 300 * dt
-        
-        pygame.display.flip()
-
-        dt = clock.tick(60) / 1000
 
 main_menu()

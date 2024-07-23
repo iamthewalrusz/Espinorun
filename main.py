@@ -1,82 +1,82 @@
-import pygame
-from time import sleep
-import random
+def game():
 
-pygame.init()
-pygame.display.set_caption('Espinorun')
+    import pygame
+    import random
 
-screen = pygame.display.set_mode((1280, 720))
-clock = pygame.time.Clock()
-running = True
-obstacles = []
+    pygame.init()
+    pygame.display.set_caption('Espinorun')
 
-# Posições
-player_pos = [(100, screen.get_height() -100), (50, 50)]
-ground_pos = [(0, screen.get_height()-45), (screen.get_width(), screen.get_height()-45)]
-obstacle_pos = [(screen.get_width(), screen.get_height() -95), (50, 50)]
+    screen = pygame.display.set_mode((1280, 720))
+    clock = pygame.time.Clock()
+    running = True
+    obstacles = []
 
-ground_colisor = pygame.Rect(ground_pos)
-player_colisor = pygame.Rect(player_pos)
-obstacle_colisor = pygame.Rect(obstacle_pos)
+    # Posições
+    player_pos = [(100, screen.get_height() -100), (50, 50)]
+    ground_pos = [(0, screen.get_height()-45), (screen.get_width(), screen.get_height()-45)]
+    obstacle_pos = [(screen.get_width(), screen.get_height() -95), (50, 50)]
 
-velocity_y = 0.2
-velocity_obstacle = -0.5
+    ground_colisor = pygame.Rect(ground_pos)
+    player_colisor = pygame.Rect(player_pos)
+    obstacle_colisor = pygame.Rect(obstacle_pos)
 
-MOVEEMENT, t = pygame.USEREVENT+1, 250
-pygame.time.set_timer(MOVEEMENT, t)
+    velocity_y = 0.2
+    velocity_obstacle = -0.5
 
-while running:
+    MOVEEMENT, t = pygame.USEREVENT+1, 250
+    pygame.time.set_timer(MOVEEMENT, t)
 
-    # Configs gerais
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
-        elif event.type == MOVEEMENT:
-                MOVEEMENT, t = pygame.USEREVENT+1, random.randrange(1000, 2000)
-                pygame.time.set_timer(MOVEEMENT, t)
-                obstacle_width = 50
-                obstacle_height = 50
-                x = screen.get_width()  # Posição inicial no lado direito da tela
-                y = screen.get_height() - 95  # Altura padrão do obstáculo em relação ao solo
-                obstacle = pygame.Rect(x, y, obstacle_width, obstacle_height)
-                obstacles.append(obstacle)
-                velocity_obstacle -= 0.05
-    
-    screen.fill('black')
+    running = True
+    while running:
 
-    # Variaveis
-    keys = pygame.key.get_pressed()
-    dt = clock.tick(60)
+        # Configs gerais
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+            elif event.type == MOVEEMENT:
+                    MOVEEMENT, t = pygame.USEREVENT+1, random.randrange(1000, 2000)
+                    pygame.time.set_timer(MOVEEMENT, t)
+                    obstacle_width = 50
+                    obstacle_height = 50
+                    x = screen.get_width()  # Posição inicial no lado direito da tela
+                    y = screen.get_height() - 95  # Altura padrão do obstáculo em relação ao solo
+                    obstacle = pygame.Rect(x, y, obstacle_width, obstacle_height)
+                    obstacles.append(obstacle)
+                    velocity_obstacle -= 0.05
+        
+        screen.fill('black')
 
-    # Gravidade
-    player_colisor.move_ip(0, velocity_y * dt)
+        # Variaveis
+        keys = pygame.key.get_pressed()
+        dt = clock.tick(60)
 
-    # Mov. obstáculo
-    for obstacle in obstacles[:]:  # Percorre uma cópia da lista para evitar problemas de modificação durante a iteração
-        obstacle.x += velocity_obstacle * dt
-        if obstacle.right < 0:  # Remover obstáculos que saíram da tela
-            obstacles.remove(obstacle)
+        # Gravidade
+        player_colisor.move_ip(0, velocity_y * dt)
 
-    # Pulo
-    if player_colisor.collidelist([ground_colisor]) >= 0:
-        velocity_y = 0
-        cont = 0
-        if keys[pygame.K_SPACE]:
-            velocity_y = -0.15
-            while cont <= 100:
-                cont += 1
-                player_colisor.move_ip(0, velocity_y * dt)
-                pygame.draw.rect(screen, 'red', player_colisor)
-            velocity_y = 0.2
+        # Mov. obstáculo
+        for obstacle in obstacles[:]:  # Percorre uma cópia da lista para evitar problemas de modificação durante a iteração
+            obstacle.x += velocity_obstacle * dt
+            if obstacle.right < 0:  # Remover obstáculos que saíram da tela
+                obstacles.remove(obstacle)
 
-    # Desenhar na tela
-    pygame.draw.rect(screen, 'white', ground_colisor)
-    pygame.draw.rect(screen, 'red', player_colisor)
-    for obstacle in obstacles:
-        pygame.draw.rect(screen, 'purple', obstacle)
+        # Pulo
+        if player_colisor.collidelist([ground_colisor]) >= 0:
+            velocity_y = 0
+            cont = 0
+            if keys[pygame.K_SPACE]:
+                velocity_y = -0.15
+                while cont <= 100:
+                    cont += 1
+                    player_colisor.move_ip(0, velocity_y * dt)
+                    pygame.draw.rect(screen, 'red', player_colisor)
+                velocity_y = 0.2
 
-    pygame.display.flip()
+        # Desenhar na tela
+        pygame.draw.rect(screen, 'white', ground_colisor)
+        pygame.draw.rect(screen, 'red', player_colisor)
+        for obstacle in obstacles:
+            pygame.draw.rect(screen, 'purple', obstacle)
 
+        pygame.display.flip()
 
-
-pygame.quit()
+    pygame.quit()
