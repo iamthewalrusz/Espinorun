@@ -22,11 +22,16 @@ def draw_text(text, font, color, surface, x, y):
 
 click = False
 
+pygame.mixer.init()
+pygame.mixer.music.load("teste.wav")
+pygame.mixer.music.play(loops=-1)
+
 def main_menu():
     while True:
 
         screen.fill([48, 100, 184])
-        draw_text("Jogo do Dinossauro", font_titulo, (255, 255, 255), screen, 325, 200)
+        draw_text("Espinorun", font_titulo, (255, 255, 255), screen, 450, 200)
+        music_pause = 0 # Variável para pausar e despausar a música
         
         mx, my = pygame.mouse.get_pos()
 
@@ -46,7 +51,12 @@ def main_menu():
         if button_music.collidepoint((mx, my)):
             pygame.draw.rect(screen, (17, 39, 74), button_music)
             if click:
-                print()
+                if music_pause == 0:
+                    pygame.mixer_music.pause()
+                    music_pause = 1
+                else:
+                    pygame.mixer_music.unpause()
+                    music_pause = 0
 
         click = False
 
