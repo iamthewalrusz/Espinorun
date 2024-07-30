@@ -1,5 +1,5 @@
 import pygame, sys
-from main import game
+from main_nova import game
 
 pygame.init()
 screen = pygame.display.set_mode((1280, 720))
@@ -23,14 +23,14 @@ def draw_text(text, font, color, surface, x, y):
 click = False
 
 pygame.mixer.init()
-pygame.mixer.music.load("teste.wav")
+pygame.mixer.music.load("./assets/teste.wav")
 pygame.mixer.music.play(loops=-1)
 
 def main_menu():
     while True:
 
-        screen.fill([48, 100, 184])
-        draw_text("Espinorun", font_titulo, (255, 255, 255), screen, 450, 200)
+        screen.fill([201, 218, 191])
+        draw_text("ESPINORUN", font_titulo, (255, 255, 255), screen, 425, 200)
         music_pause = 0 # Variável para pausar e despausar a música
         
         mx, my = pygame.mouse.get_pos()
@@ -38,18 +38,18 @@ def main_menu():
         button_1 = pygame.Rect(525, 500, 200, 50)
         button_music = pygame.Rect(25, 650, 50, 50)
         
-        pygame.draw.rect(screen, (27, 59, 110), button_1)
-        pygame.draw.rect(screen, (27, 59, 110), button_music)
+        pygame.draw.rect(screen, (156, 169, 134), button_1)
+        pygame.draw.rect(screen, (156, 169, 134), button_music)
         draw_text("Iniciar", font, (255, 255, 255), screen, 605, 517)
 
         if button_1.collidepoint((mx, my)):
-            pygame.draw.rect(screen, (17, 39, 74), button_1)
+            pygame.draw.rect(screen, (128, 141, 124), button_1)
             draw_text("Iniciar", font, (204, 204, 204), screen, 605, 517)
             if click:
                 game()
 
         if button_music.collidepoint((mx, my)):
-            pygame.draw.rect(screen, (17, 39, 74), button_music)
+            pygame.draw.rect(screen, (128, 141, 124), button_music)
             if click:
                 if music_pause == 0:
                     pygame.mixer_music.pause()

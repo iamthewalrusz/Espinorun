@@ -1,4 +1,5 @@
-import pygame
+import pygame, sys
+from pygame.locals import *
 
 def colisions(a, b):
     if a.colliderect(b):
@@ -10,7 +11,7 @@ def game():
     x = 1280
     y = 720
     screen = pygame.display.set_mode((x, y))
-    pygame.display.set_caption('Estegorun')
+    pygame.display.set_caption('Espinorun')
 
     bg = pygame.image.load('./assets/background.png').convert_alpha()
     bg = pygame.transform.scale(bg, (x, y))
@@ -34,6 +35,12 @@ def game():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
+                pygame.quit()
+                sys.exit()
+            if event.type == KEYDOWN:
+                if event.key == K_ESCAPE:
+                    pygame.quit()
+                    sys.exit()
         
         # Teclas
         key = pygame.key.get_pressed()
@@ -66,5 +73,4 @@ def game():
         #pygame.draw.rect(screen, (255, 0, 0), ground_rect, 4)
     
         pygame.display.update()
-
-game()
+    pygame.quit()
