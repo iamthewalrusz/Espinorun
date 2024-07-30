@@ -1,5 +1,5 @@
 import pygame, sys
-from main_nova import game
+from main import game
 
 pygame.init()
 screen = pygame.display.set_mode((1280, 720))
@@ -46,7 +46,7 @@ def main_menu():
             pygame.draw.rect(screen, (128, 141, 124), button_1)
             draw_text("Iniciar", font, (204, 204, 204), screen, 605, 517)
             if click:
-                game()
+                pontos = game()
 
         if button_music.collidepoint((mx, my)):
             pygame.draw.rect(screen, (128, 141, 124), button_music)
