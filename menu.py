@@ -1,5 +1,5 @@
 import pygame, sys
-from main import game
+from main_nova import game
 
 pygame.init()
 screen = pygame.display.set_mode((1280, 720))
@@ -11,8 +11,8 @@ dt = 0
 
 player_pos = pygame.Vector2(screen.get_width() / 2, screen.get_height() / 2)
 
-font = pygame.font.SysFont(None, 20)
-font_titulo = pygame.font.SysFont(None, 100)
+font = pygame.font.Font("./assets/Pixels.ttf", 25)
+font_titulo = pygame.font.Font("./assets/Pixels.ttf", 150)
 
 def draw_text(text, font, color, surface, x, y):
     textobj = font.render(text, 1, color)
@@ -30,7 +30,7 @@ def main_menu():
     while True:
 
         screen.fill([201, 218, 191])
-        draw_text("ESPINORUN", font_titulo, (255, 255, 255), screen, 425, 200)
+        draw_text("ESPINORUN", font_titulo, (255, 255, 255), screen, 435, 200)
         music_pause = 0 # Variável para pausar e despausar a música
         
         mx, my = pygame.mouse.get_pos()
@@ -40,13 +40,13 @@ def main_menu():
         
         pygame.draw.rect(screen, (156, 169, 134), button_1)
         pygame.draw.rect(screen, (156, 169, 134), button_music)
-        draw_text("Iniciar", font, (255, 255, 255), screen, 605, 517)
+        draw_text("Iniciar", font, (255, 255, 255), screen, 605, 515)
 
         if button_1.collidepoint((mx, my)):
             pygame.draw.rect(screen, (128, 141, 124), button_1)
-            draw_text("Iniciar", font, (204, 204, 204), screen, 605, 517)
+            draw_text("Iniciar", font, (255, 255, 255), screen, 605, 515)
             if click:
-                pontos = game()
+                game()
 
         if button_music.collidepoint((mx, my)):
             pygame.draw.rect(screen, (128, 141, 124), button_music)

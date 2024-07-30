@@ -1,118 +1,87 @@
-import pygame
-import sys
 from pygame.locals import *
-import random
-import time
-
-def collisions(a, b):
-    return a.colliderect(b)
-
-def create_obstacle(screen_width, screen_height):
-    obstacle_img = pygame.image.load(f'./assets/pedra-{random.randint(1, 2)}.png').convert_alpha()
-    obstacle_rect = obstacle_img.get_rect()
-    obstacle_rect.x = screen_width
-    obstacle_rect.y = screen_height - 190
-    return obstacle_img, obstacle_rect
 
 def game():
+
+    import pygame, random, sys
+
     pygame.init()
-    
-    x = 1280
-    y = 720
-    screen = pygame.display.set_mode((x, y))
     pygame.display.set_caption('Espinorun')
 
-    # Background
-    bg = pygame.image.load('./assets/background.png').convert_alpha()
-    bg = pygame.transform.scale(bg, (x, y))
-
-    # Ground
-    ground_img = pygame.image.load('./assets/ground.png').convert_alpha()
-    ground_rect = ground_img.get_rect()
-    pos_ground_y = screen.get_height() - 128
-    ground_rect.y = pos_ground_y
-
-    # Player
-    player_img = pygame.image.load('./assets/Player.png').convert_alpha()
-    player_rect = player_img.get_rect()
-    pos_player_x = 150
-    pos_player_y = screen.get_height() - 430
-    gravity = 0.1
-    jump_height = 8
-    velocity_y = 0
-    on_ground = False
-
-    # Obstacles
+    screen = pygame.display.set_mode((1280, 720))
+    clock = pygame.time.Clock()
+    running = True
     obstacles = []
-    last_obstacle_time = time.time()
-    obstacle_interval = random.uniform(1, 3)
-    obstacle_velocity = 2
 
-    #Text
-    font = pygame.font.Font('./assets/Pixels.ttf', 50)
-    pontos = 0
+    # Posições
+    player_pos = [(100, screen.get_height() -100), (50, 50)]
+    ground_pos = [(0, screen.get_height()-45), (screen.get_width(), screen.get_height()-45)]
+    obstacle_pos = [(screen.get_width(), screen.get_height() -95), (50, 50)]
+
+    ground_colisor = pygame.Rect(ground_pos)
+    player_colisor = pygame.Rect(player_pos)
+    obstacle_colisor = pygame.Rect(obstacle_pos)
+
+    velocity_y = 0.2
+    velocity_obstacle = -0.5
+
+    MOVEEMENT, t = pygame.USEREVENT+1, 250
+    pygame.time.set_timer(MOVEEMENT, t)
 
     running = True
     while running:
+
+        # Configs gerais
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
-                pygame.quit()
-                sys.exit()
             if event.type == KEYDOWN:
                 if event.key == K_ESCAPE:
                     pygame.quit()
                     sys.exit()
-                if event.key == K_SPACE and on_ground:
-                    on_ground = False
-                    velocity_y = -jump_height
+            elif event.type == MOVEEMENT:
+                    MOVEEMENT, t = pygame.USEREVENT+1, random.randrange(1000, 2000)
+                    pygame.time.set_timer(MOVEEMENT, t)
+                    obstacle_width = 50
+                    obstacle_height = 50
+                    x = screen.get_width()  # Posição inicial no lado direito da tela
+                    y = screen.get_height() - 95  # Altura padrão do obstáculo em relação ao solo
+                    obstacle = pygame.Rect(x, y, obstacle_width, obstacle_height)
+                    obstacles.append(obstacle)
+                    velocity_obstacle -= 0.05
+        
+        screen.fill('black')
 
+        # Variaveis
+        keys = pygame.key.get_pressed()
+        dt = clock.tick(60)
 
-        # Gravity
-        if collisions(player_rect.move(0, velocity_y), ground_rect):
-            on_ground = True
+        # Gravidade
+        player_colisor.move_ip(0, velocity_y * dt)
+
+        # Mov. obstáculo
+        for obstacle in obstacles[:]:  # Percorre uma cópia da lista para evitar problemas de modificação durante a iteração
+            obstacle.x += velocity_obstacle * dt
+            if obstacle.right < 0:  # Remover obstáculos que saíram da tela
+                obstacles.remove(obstacle)
+
+        # Pulo
+        if player_colisor.collidelist([ground_colisor]) >= 0:
             velocity_y = 0
-        else:
-            velocity_y += gravity
-            pos_player_y += velocity_y
+            cont = 0
+            if keys[pygame.K_SPACE]:
+                velocity_y = -0.15
+                while cont <= 100:
+                    cont += 1
+                    player_colisor.move_ip(0, velocity_y * dt)
+                    pygame.draw.rect(screen, 'red', player_colisor)
+                velocity_y = 0.2
 
-        # Move and manage obstacles
-        current_time = time.time()
-        if current_time - last_obstacle_time > obstacle_interval:
-            obstacle_img, obstacle_rect = create_obstacle(screen.get_width(), screen.get_height())
-            obstacles.append((obstacle_img, obstacle_rect))
-            last_obstacle_time = current_time
-            obstacle_interval = random.uniform(1, 3)  # Update the interval for the next obstacle
+        # Desenhar na tela
+        pygame.draw.rect(screen, 'white', ground_colisor)
+        pygame.draw.rect(screen, 'red', player_colisor)
+        for obstacle in obstacles:
+            pygame.draw.rect(screen, 'purple', obstacle)
 
-        # Update obstacles
-        for i, (obstacle_img, obstacle_rect) in enumerate(obstacles):
-            obstacle_rect.x -= obstacle_velocity  # Move the obstacle to the left
-            if obstacle_rect.x < -obstacle_rect.width:
-                pontos += 1
-                obstacles.pop(i)
-        
-        if obstacle_velocity < 7:
-            obstacle_velocity += 0.00001
+        pygame.display.flip()
 
-        # Update player and obstacle positions
-        player_rect.x = pos_player_x
-        player_rect.y = pos_player_y
-
-        # Draw everything
-        screen.blit(bg, (0, 0))
-        screen.blit(ground_img, (0, screen.get_height() - 128))
-        screen.blit(player_img, (pos_player_x, pos_player_y))
-        for obstacle_img, obstacle_rect in obstacles:
-            screen.blit(obstacle_img, (obstacle_rect.x, obstacle_rect.y))
-        
-        score = font.render(f'Pontos: {int(pontos)}', True, (95, 111, 101))
-        screen.blit(score, (screen.get_width() - 200, 50))
-
-
-        #GameOver
-        for obstacle_img, obstacle_rect in obstacles:
-            if collisions(player_rect, obstacle_rect):
-                return pontos # Retorna ao menu principal
-
-        pygame.display.update()
     pygame.quit()
