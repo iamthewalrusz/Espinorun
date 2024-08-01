@@ -16,18 +16,34 @@ def game():
     
     x = 1280
     y = 720
-    screen = pygame.display.set_mode((x, y))
+    screen = pygame.display.set_mode((x, y), pygame.FULLSCREEN)
     pygame.display.set_caption('Espinorun')
 
     # Background
     bg = pygame.image.load('./assets/background.png').convert_alpha()
     bg = pygame.transform.scale(bg, (x, y))
-
+    
+    # Duplicate background for continuous scrolling
+    bg2 = pygame.image.load('./assets/background.png').convert_alpha()
+    bg2 = pygame.transform.scale(bg2, (x, y))
+    
+    bg_x1 = 0
+    bg_x2 = x
+    
     # Ground
     ground_img = pygame.image.load('./assets/ground.png').convert_alpha()
     ground_rect = ground_img.get_rect()
     pos_ground_y = screen.get_height() - 128
     ground_rect.y = pos_ground_y
+
+    ground2_img = pygame.image.load('./assets/ground.png').convert_alpha()
+    ground2_rect = ground2_img.get_rect()
+    pos_ground2_y = screen.get_height() - 128
+    ground2_rect.y = pos_ground2_y
+
+    ground_x1 = 0
+    ground_x2 = x
+    ground_velocity = 2
 
     # Player
     player_img = pygame.image.load('./assets/Player.png').convert_alpha()
@@ -46,8 +62,8 @@ def game():
     obstacle_velocity = 2
     angle = 0
 
-    #Text
-    font = pygame.font.Font('./assets/Pixels.ttf', 50)
+    # Text
+    font = pygame.font.Font('./assets/Pixels.ttf', 65)
     pontos = 0
 
     running = True
@@ -64,7 +80,6 @@ def game():
                 if event.key == K_SPACE and on_ground:
                     on_ground = False
                     velocity_y = -jump_height
-
 
         # Gravity
         if collisions(player_rect.move(0, velocity_y), ground_rect):
@@ -96,9 +111,29 @@ def game():
         player_rect.x = pos_player_x
         player_rect.y = pos_player_y
 
+        # Move background
+        bg_x1 -= 1
+        bg_x2 -= 1
+
+        ground_x1 -= ground_velocity
+        ground_x2 -= ground_velocity
+
+        if bg_x1 <= -x:
+            bg_x1 = x
+        if bg_x2 <= -x:
+            bg_x2 = x
+        
+        if ground_x1 <= -x:
+            ground_x1 = x
+        if ground_x2 <= -x:
+            ground_x2 = x
+
         # Draw everything
-        screen.blit(bg, (0, 0))
-        screen.blit(ground_img, (0, screen.get_height() - 128))
+        screen.blit(bg, (bg_x1, 0))
+        screen.blit(bg2, (bg_x2, 0))
+        #screen.blit(ground_img, (0, screen.get_height() - 128))
+        screen.blit(ground_img, (ground_x1, screen.get_height() - 128))
+        screen.blit(ground2_img, (ground_x2, screen.get_height() - 128))
         screen.blit(player_img, (pos_player_x, pos_player_y))
         angle += 0.5
         for obstacle_img, obstacle_rect in obstacles:
@@ -108,11 +143,10 @@ def game():
         score = font.render(f'Pontos: {int(pontos)}', True, (95, 111, 101))
         screen.blit(score, (screen.get_width() - 200, 50))
 
-
-        #GameOver
+        # GameOver
         for obstacle_img, obstacle_rect in obstacles:
             if collisions(player_rect, obstacle_rect):
-                return pontos # Retorna ao menu principal
+                return pontos  # Retorna ao menu principal
 
         pygame.display.update()
     pygame.quit()
