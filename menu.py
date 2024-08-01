@@ -23,8 +23,7 @@ pygame.mixer.music.play(loops=-1)
 
 def main_menu():
     button_size_x, button_size_y = 45, 45
-    pontos = 0
-    record = 0
+    pontos, record = 0, 0
     pygame.display.set_caption('Espinorun')
     music_img = pygame.image.load('./assets/NotaMusical.png').convert_alpha()
     music_img = pygame.transform.scale(music_img, (button_size_x-15, button_size_y-15))
@@ -32,6 +31,7 @@ def main_menu():
     bg = pygame.image.load('./assets/background.png').convert_alpha()
     bg = pygame.transform.scale(bg, (1280, 720))
     screen.fill([201, 218, 191])
+    sfx = pygame.mixer.Sound("./assets/soundeffect.wav")
 
     while True:
         
@@ -98,6 +98,7 @@ def main_menu():
                     pygame.quit()
                     sys.exit()
             if event.type == MOUSEBUTTONDOWN:
+                pygame.mixer.Sound.play(sfx)
                 if event.button == 1:
                     click = True
         

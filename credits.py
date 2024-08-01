@@ -19,6 +19,7 @@ def credits():
     bg = pygame.transform.scale(bg, (1280, 720))
     screen.fill([201, 218, 191])
     click = False
+    sfx = pygame.mixer.Sound("./assets/soundeffect.wav")
 
     while True:
         screen.blit(bg, (0,0))
@@ -55,6 +56,7 @@ def credits():
                     pygame.quit()
                     sys.exit()
             if event.type == MOUSEBUTTONDOWN:
+                pygame.mixer.Sound.play(sfx)
                 if event.button == 1:
                     click = True 
 
